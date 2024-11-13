@@ -1,0 +1,57 @@
+---
+- name: Installing nginx and python dependencies
+  hosts: localhost
+  become: yes
+
+  tasks:
+
+    # Install required system packages
+    - name: Install required system packages
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      loop:
+        - 'ca-certificates'
+        - 'curl'
+        - 'software-properties-common'
+        - 'htop'
+        - 'net-tools'
+        - 'vim'
+        - 'python-is-python3' 
+        - 'python3-pip' 
+
+    # Install Docker (Ensure Docker is installed if necessary)
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: latest
+
+    # Install virtualenv using pip (if you need it)
+    - name: Install virtualenv using pip
+      pip:
+        name: virtualenv
+        state: present
+
+    # Create a Python virtual environment (if needed)
+    - name: Create a virtual environment
+      command: virtualenv /home/ubuntu/.venv
+
+    # Install and start NGINX
+    - name: Install NGINX
+      apt:
+        name: nginx
+        state: present
+
+    - name: Start and enable NGINX service
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    # Check if NGINX is running by hitting the URL (optional check)
+    - name: Ensure NGINX is running
+      uri:
+        url: http://localhost
+        status_code: 200
+...
