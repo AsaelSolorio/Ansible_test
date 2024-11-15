@@ -1,0 +1,39 @@
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Start NGINX using service (without systemctl)
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Ensure NGINX is running
+  uri:
+    url: http://localhost
+    status_code: 200
+
+- name: Install Python 3 and pip
+  apt:
+    name:
+      - python3
+      - python3-pip
+    state: present
+    update_cache: yes
+
+- name: Install packaging library
+  pip:
+    name: packaging
+    state: present
+
+- name: Copy requirements file to container
+  copy:
+    src: ./requirements.txt  # The source file on the local machine (or relative to where you run the playbook)
+    dest: /tmp/requirements.txt  # The destination path on the container or target machine
+
+- name: Install required Python packages from requirements.txt
+  pip:
+    requirements: /tmp/requirements.txt
+    state: present

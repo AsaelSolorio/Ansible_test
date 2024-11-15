@@ -1,0 +1,34 @@
+---
+# Use Ansible Galaxy to get other modules
+dependency:
+  name: galaxy
+
+# Docker driver for running tests
+driver:
+  name: docker
+  options:
+    wait_for:
+      timeout: 600  # Increase timeout to 600 seconds for container startup
+
+# Linter to check file syntax; try "molecule lint" to test it
+lint: yamllint  # This should be a string, not an object
+
+# Docker images to use; using Ubuntu 20.04
+platforms:
+  - name: instance
+    image: ubuntu:20.04
+    wait_for_container: true
+    wait_for_timeout: 300  # Timeout for container creation
+    wait_for_retries: 600
+    ansible_python_interpreter: /usr/bin/python3  # Number of retries for waiting
+
+# Run Ansible in the Docker containers
+provisioner:
+  name: ansible
+  inventory:
+    links: {} # Ansible linting for better code quality
+
+verifier:
+  name: testinfra
+  directory: tests
+

@@ -1,0 +1,16 @@
+- name: Converge
+  hosts: all
+  roles:
+    - role: my_role
+
+  tasks:
+    - name: Ensure the 'packaging' library is installed
+      pip:
+        name: packaging
+        state: present
+      become: yes 
+
+    # If you are using a virtualenv or different Python version:
+    - name: Set ansible_python_interpreter to /usr/bin/python3.8
+      set_fact:
+        ansible_python_interpreter: /usr/bin/python3.8
